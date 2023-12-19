@@ -281,45 +281,44 @@ class Detection(object):
     @staticmethod
     def count_php_line(filename):
         count = {'count_code': 0, 'count_blank': 0, 'count_pound': 0}
-        fi = open(filename, 'r')
-        file_line = fi.readline()
-        while fi.tell() != os.path.getsize(filename):
-            file_line = file_line.lstrip()
-            if len(file_line) == 0:
-                count['count_blank'] += 1
-            elif file_line.startswith('//') or file_line.startswith('#'):
-                count['count_pound'] += 1
-            elif file_line.count('/*') == 1 and file_line.count('*/') == 1:
-                if file_line.startswith('/*'):
-                    count['count_pound'] += 1
-                else:
-                    count['count_code'] += 1
-            elif file_line.count('/*') == 1 and file_line.count('*/') == 0:
-                if file_line.startswith('/*'):
-                    count['count_pound'] += 1
-                    while True:
-                        file_line = fi.readline()
-                        if len(file_line) == 0 or file_line == "\n":
-                            count['count_blank'] += 1
-                        else:
-                            count['count_pound'] += 1
-                        if file_line.endswith('*/\n'):
-                            break
-                else:
-                    count['count_code'] += 1
-                    while True:
-                        file_line = fi.readline()
-                        if len(file_line) == 0 or file_line == "\n":
-                            count['count_blank'] += 1
-                        else:
-                            count['count_code'] += 1
-                        if file_line.find('*/'):
-                            break
-            else:
-                count['count_code'] += 1
+        with open(filename, 'r') as fi:
             file_line = fi.readline()
-        fi.close()
-        return count
+            while fi.tell() != os.path.getsize(filename):
+                file_line = file_line.lstrip()
+                if len(file_line) == 0:
+                    count['count_blank'] += 1
+                elif file_line.startswith('//') or file_line.startswith('#'):
+                    count['count_pound'] += 1
+                elif file_line.count('/*') == 1 and file_line.count('*/') == 1:
+                    if file_line.startswith('/*'):
+                        count['count_pound'] += 1
+                    else:
+                        count['count_code'] += 1
+                elif file_line.count('/*') == 1 and file_line.count('*/') == 0:
+                    if file_line.startswith('/*'):
+                        count['count_pound'] += 1
+                        while True:
+                            file_line = fi.readline()
+                            if len(file_line) == 0 or file_line == "\n":
+                                count['count_blank'] += 1
+                            else:
+                                count['count_pound'] += 1
+                            if file_line.endswith('*/\n'):
+                                break
+                    else:
+                        count['count_code'] += 1
+                        while True:
+                            file_line = fi.readline()
+                            if len(file_line) == 0 or file_line == "\n":
+                                count['count_blank'] += 1
+                            else:
+                                count['count_code'] += 1
+                            if file_line.find('*/'):
+                                break
+                else:
+                    count['count_code'] += 1
+                file_line = fi.readline()
+            return count
 
     # 统计Java和JS数据的函数
     @staticmethod
